@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Phishing Detection Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            font-size: 18px;
+        }
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        form {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="submit"] {
+            width: 95%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+        }
+        input[type="text"] {
+            border: 2px solid #ddd;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 6px rgba(76, 175, 80, 0.2);
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+            transition: all 0.3s ease;
+        }
+        input[type="submit"]:hover, input[type="submit"]:focus {
+            background-color: #45a049;
+            box-shadow: 0 6px 10px rgba(76, 175, 80, 0.3);
+        }
+        .result {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .legitimate, .phishing {
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+            border: 1px solid;
+        }
+        .legitimate {
+            color: green;
+            border-color: green;
+        }
+        .phishing {
+            color: red;
+            border-color: red;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+        }
+        .info, .tips {
+            margin-top: 30px;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        .info h3, .tips h3 {
+            margin-top: 0;
+        }
+        .info ul, .tips ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .tips li {
+            margin-bottom: 12px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+        }
+        .tips li::before {
+            content: "✔️";
+            color: green;
+            margin-right: 10px;
+        }
+        footer {
+            margin-top: 30px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+        .container {
+            width: 90%; /* More screen size adaptation */
+            padding: 20px;
+        }
+        input[type="text"], input[type="submit"] {
+            width: 100%; /* Use full width on smaller screens */
+        }
+    }
+
+    /* Accessibility: Focus styles for better keyboard navigation */
+    a, input[type="submit"], input[type="text"], button {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+    a:focus, input[type="submit"]:focus, input[type="text"]:focus, button:focus {
+        outline: 2px dashed #4CAF50; /* High contrast focus indicator */
+    }
+    .survey-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
+    .survey-button:hover, .survey-button:focus {
+        background-color: #0056b3;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>URL Phishing Detection Tool</h1>
+        <form action="/predict" method="post" aria-label="URL Phishing Detection Form">
+            <input type="text" name="url" placeholder="Enter URL" required aria-required="true">
+            <input type="submit" value="Evaluate URL">
+        </form>
+        {% if prediction_text %}
+            <div class="result {{ 'legitimate' if prediction_text == 'Legitimate' else 'phishing' }}">
+                {% if prediction_text == 'Legitimate' %}
+                    <svg width="24" height="24" fill="green" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+                    </svg>
+                {% else %}
+                    <svg width="24" height="24" fill="red" xmlns="http://www.w.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 14h-2v-2h2v2zm0-4h-2V7h2v5z"/>
+                    </svg>
+                    {% endif %}
+                    {{ prediction_text }}
+                </div>
+            {% endif %}
+            {% if analysis %}
+                <div class="info">
+                    <h3>URL Analysis:</h3>
+                    <ul>
+                        <li><strong>HTTPS Present:</strong> {{ "Yes" if analysis['has_https'] else "No" }}</li>
+                        <li><strong>Number of Dots in Hostname:</strong> {{ analysis['num_dots'] }}</li>
+                        <li><strong>URL Length:</strong> {{ analysis['url_length'] }} characters</li>
+                        <li><strong>Hostname Length:</strong> {{ analysis['hostname_length'] }} characters</li>
+                    </ul>
+                </div>
+            {% endif %}
+            <div class="tips">
+                <h3>Tips to Avoid Phishing Scams:</h3>
+                <ul>
+                    <li>Check for HTTPS in the URL.</li>
+                    <li>Think before you click and avoid clicking on suspicious links.</li>
+                    <li>Beware of urgent requests for personal information.</li>
+                    <li>Verify the sender's email address or phone number.</li>
+                    <li>Be cautious of unexpected attachments.</li>
+                    <li>Install and use anti-phishing tools.</li>
+                </ul>
+            </div>
+            <button class="survey-button" onclick="window.location.href='https://your-post-survey-link.qualtrics.com';">Complete Post-Tool Survey</button>
+        </div>
+        <footer>
+            <p>Developed by Sandra James George &copy; 2024</p>
+        </footer>
+    </body>
+    </html>
