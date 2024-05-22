@@ -1,0 +1,8 @@
+pandas
+scikit-learn
+joblib
+beautifulsoup4
+requests
+tldextract
+flask
+whois
